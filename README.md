@@ -1,0 +1,4 @@
+pug
+node
+mongodb
+passport
