@@ -26,6 +26,9 @@ html(lang='en')
             li
               a(href='/users/logout') Logout
     .container
+      - if (messages.success)
+        ul.success
+          li= messages.success
       block content
 
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')

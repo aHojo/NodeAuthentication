@@ -1,33 +1,37 @@
 // Express modules
-var createError = require('http-errors');
-var express = require('express');
-var sessions = require('express-session');
-var expressValidator = require('express-validator');
-// Passport modules
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
+const createError = require('http-errors');
+const express = require('express');
+const sessions = require('express-session');
+const expressValidator = require('express-validator');
 
-var multer = require('multer');
-var upload = multer({'dest': './uploads'})
-var flash = require('connect-flash');
+// Passport modules
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+
+// Password hashing
+const bcrypt = require('bcryptjs');
+
+const multer = require('multer');
+const upload = multer({'dest': './uploads'})
+
 
 // Database Modules
-var mongo = require('mongodb');
-var mongoose = require('mongoose');
-var db = mongoose.connection;
+const mongo = require('mongodb');
+const mongoose = require('mongoose');
+const db = mongoose.connection;
 
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
 //For login messages
-var flash = require('connect-flash');
+const flash = require('express-flash');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
 
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -39,9 +43,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
 // Handle sessions 
 app.use(sessions({
   secret: 'secret',
@@ -52,6 +53,20 @@ app.use(sessions({
 // Passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+//Messages middleware
+app.use(flash());
+app.use(function (req, res, next) {
+  res.locals.messages = require('express-messages')(req, res);
+  next();
+});
+
+// ROUTES
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+
+
+
 
 // Validator
 app.use(expressValidator({
@@ -71,11 +86,7 @@ app.use(expressValidator({
   }
 }));
 
-app.use(flash());
-app.use(function (req, res, next) {
-  res.locals.messages = require('express-messages')(req, res);
-  next();
-});
+
 
 
 // catch 404 and forward to error handler

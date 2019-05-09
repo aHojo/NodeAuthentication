@@ -1,6 +1,9 @@
 extends layout
 
 block content
+  ul.error
+    for item in messages
+      li= item
   h2.page-header Login
   p Please login below
   form(method='post', action='/users/login')
