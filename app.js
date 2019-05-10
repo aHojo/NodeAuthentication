@@ -62,9 +62,12 @@ app.use(function (req, res, next) {
 });
 
 // ROUTES
+app.get('*', function(req, res, next){
+  res.locals.user = req.user || null;
+  next();
+});
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-
 
 
 
